@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI 使用習慣調查</title>
+<style>
+  :root {
+    --ink: #1a1a2e;
+    --ink-soft: #4a4a6a;
+    --ink-muted: #8888aa;
+    --accent: #6c63ff;
+    --accent-light: #ede9ff;
+    --accent-mid: #a89bff;
+    --surface: #ffffff;
+    --bg: #f6f5ff;
+    --border: #e2dfff;
+    --success: #22c55e;
+    --radius: 12px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Noto Sans TC', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    min-height: 100vh;
+    padding: 2rem 1rem;
+  }
+
+  .container {
+    max-width: 680px;
+    margin: 0 auto;
+  }
+
+  /* Header */
+  .header {
+    text-align: center;
+    margin-bottom: 2.5rem;
+  }
+
+  .header-badge {
+    display: inline-block;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    color: var(--accent);
+    background: var(--accent-light);
+    border-radius: 999px;
+    padding: 4px 14px;
+    margin-bottom: 1rem;
+    text-transform: uppercase;
+  }
+
+  .header h1 {
+    font-size: clamp(24px, 5vw, 36px);
+    font-weight: 700;
+    line-height: 1.2;
+    color: var(--ink);
+    margin-bottom: 0.75rem;
+  }
+
+  .header p {
+    font-size: 15px;
+    color: var(--ink-soft);
+    line-height: 1.6;
+  }
+
+  /* Nav tabs */
+  .nav {
+    display: flex;
+    gap: 4px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 4px;
+    margin-bottom: 2rem;
+  }
+
+  .nav-btn {
+    flex: 1;
+    padding: 8px;
+    border: none;
+    background: transparent;
+    color: var(--ink-muted);
+    font-size: 14px;
+    font-weight: 500;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .nav-btn.active {
+    background: var(--accent);
+    color: white;
+  }
+
+  /* Card */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.75rem;
+    margin-bottom: 1rem;
+  }
+
+  .question-num {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+
+  .question-label {
+    font-size: 17px;
+    font-weight: 600;
+    color: var(--ink);
+    margin-bottom: 1.25rem;
+    line-height: 1.4;
+  }
+
+  /* Radio options */
+  .options-grid {
+    display: grid;
+    gap: 8px;
+  }
+
+  .options-grid.cols-2 {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .option-label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 11px 14px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.15s;
+    font-size: 14px;
+    color: var(--ink-soft);
+    user-select: none;
+  }
+
+  .option-label:hover {
+    border-color: var(--accent-mid);
+    background: var(--accent-light);
+    color: var(--ink);
+  }
+
+  .option-label input {
+    accent-color: var(--accent);
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+  }
+
+  .option-label:has(input:checked) {
+    border-color: var(--accent);
+    background: var(--accent-light);
+    color: var(--ink);
+    font-weight: 500;
+  }
+
+  /* Submit button */
+  .submit-btn {
+    width: 100%;
+    padding: 14px;
+    background: var(--accent);
+    color: white;
+    border: none;
+    border-radius: var(--radius);
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 1rem;
+    transition: all 0.15s;
+    letter-spacing: 0.02em;
+  }
+
+  .submit-btn:hover { background: #5a51ee; transform: translateY(-1px); }
+  .submit-btn:active { transform: translateY(0); }
+  .submit-btn:disabled { background: var(--ink-muted); cursor: not-allowed; transform: none; }
+
+  /* Thank you state */
+  .thank-you {
+    text-align: center;
+    padding: 3rem 2rem;
+  }
+
+  .check-circle {
+    width: 64px;
+    height: 64px;
+    background: #dcfce7;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1.25rem;
+    font-size: 28px;
+  }
+
+  .thank-you h2 { font-size: 22px; font-weight: 700; margin-bottom: 8px; }
+  .thank-you p { color: var(--ink-soft); font-size: 15px; margin-bottom: 1.5rem; }
+
+  .see-results-btn {
+    padding: 10px 24px;
+    background: transparent;
+    border: 1.5px solid var(--accent);
+    color: var(--accent);
+    border-radius: var(--radius);
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .see-results-btn:hover { background: var(--accent-light); }
+
+  /* Results page */
+  .results-header {
+    margin-bottom: 1.5rem;
+  }
+
+  .results-header h2 { font-size: 20px; font-weight: 700; margin-bottom: 4px; }
+  .results-header p { font-size: 14px; color: var(--ink-muted); }
+
+  .stat-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.25rem 1.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .stat-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--ink-muted);
+    margin-bottom: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  .bar-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+  }
+
+  .bar-label {
+    font-size: 13px;
+    color: var(--ink-soft);
+    min-width: 110px;
+    flex-shrink: 0;
+  }
+
+  .bar-track {
+    flex: 1;
+    height: 8px;
+    background: var(--border);
+    border-radius: 999px;
+    overflow: hidden;
+  }
+
+  .bar-fill {
+    height: 100%;
+    background: var(--accent);
+    border-radius: 999px;
+    transition: width 0.6s ease;
+  }
+
+  .bar-count {
+    font-size: 12px;
+    color: var(--ink-muted);
+    min-width: 30px;
+    text-align: right;
+  }
+
+  .total-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--accent-light);
+    color: var(--accent);
+    font-size: 13px;
+    font-weight: 600;
+    padding: 6px 12px;
+    border-radius: 999px;
+    margin-bottom: 1.5rem;
+  }
+
+  .loading {
+    text-align: center;
+    padding: 3rem;
+    color: var(--ink-muted);
+    font-size: 15px;
+  }
+
+  .error-msg {
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    color: #b91c1c;
+    border-radius: var(--radius);
+    padding: 1rem 1.25rem;
+    font-size: 14px;
+    margin-bottom: 1rem;
+  }
+
+  /* ── 設定提示區 ── */
+  .setup-notice {
+    background: #fffbeb;
+    border: 1px solid #fde68a;
+    border-radius: var(--radius);
+    padding: 1rem 1.25rem;
+    font-size: 13px;
+    color: #92400e;
+    margin-bottom: 1.5rem;
+    line-height: 1.6;
+  }
+  .setup-notice strong { font-weight: 600; }
+  .setup-notice code {
+    background: #fef3c7;
+    padding: 1px 5px;
+    border-radius: 4px;
+    font-family: monospace;
+  }
+
+  @media (max-width: 500px) {
+    .options-grid.cols-2 { grid-template-columns: 1fr; }
+    .card { padding: 1.25rem; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <div class="header">
+    <span class="header-badge">2 分鐘完成</span>
+    <h1>你怎麼用 AI？</h1>
+    <p>幫我們了解大家的 AI 使用現況，<br>結果公開透明，填完即可查看。</p>
+  </div>
+
+  <div class="nav">
+    <button class="nav-btn active" id="tab-survey" onclick="showTab('survey')">填寫問卷</button>
+    <button class="nav-btn" id="tab-results" onclick="showTab('results')">查看結果</button>
+  </div>
+
+  <!-- ===== SURVEY ===== -->
+  <div id="view-survey">
+
+    <!-- 提示：尚未設定時顯示 -->
+    <div class="setup-notice" id="setup-notice">
+      ⚙️ <strong>設定提醒：</strong>請將下方 <code>SCRIPT_URL</code> 換成你的 Google Apps Script 網址，才能正確儲存資料。
+      <a href="#" onclick="alert('步驟見 README：\n1. 建 Google Sheets\n2. 貼上 Apps Script 程式碼\n3. 部署為網路應用程式\n4. 複製網址貼回此處')">查看設定步驟</a>
+    </div>
+
+    <div id="form-area">
+      <!-- Q1 -->
+      <div class="card">
+        <div class="question-num">問題 1 / 4</div>
+        <div class="question-label">你的年齡範圍是？</div>
+        <div class="options-grid cols-2">
+          <label class="option-label"><input type="radio" name="q1" value="18歲以下"> 18 歲以下</label>
+          <label class="option-label"><input type="radio" name="q1" value="18–24"> 18 – 24 歲</label>
+          <label class="option-label"><input type="radio" name="q1" value="25–34"> 25 – 34 歲</label>
+          <label class="option-label"><input type="radio" name="q1" value="35–44"> 35 – 44 歲</label>
+          <label class="option-label"><input type="radio" name="q1" value="45–54"> 45 – 54 歲</label>
+          <label class="option-label"><input type="radio" name="q1" value="55歲以上"> 55 歲以上</label>
+        </div>
+      </div>
+
+      <!-- Q2 -->
+      <div class="card">
+        <div class="question-num">問題 2 / 4</div>
+        <div class="question-label">你對 AI 工具的熟悉程度？</div>
+        <div class="options-grid">
+          <label class="option-label"><input type="radio" name="q2" value="完全新手"> 🌱 完全新手 — 還沒用過或剛開始接觸</label>
+          <label class="option-label"><input type="radio" name="q2" value="偶爾使用"> 🙂 偶爾使用 — 有興趣但不固定</label>
+          <label class="option-label"><input type="radio" name="q2" value="定期使用"> ⚡ 定期使用 — 每週都會用</label>
+          <label class="option-label"><input type="radio" name="q2" value="進階用戶"> 🔥 進階用戶 — 深度整合進工作流程</label>
+          <label class="option-label"><input type="radio" name="q2" value="專業開發者"> 🛠 專業開發者 — 開發或部署 AI 應用</label>
+        </div>
+      </div>
+
+      <!-- Q3 -->
+      <div class="card">
+        <div class="question-num">問題 3 / 4（可複選）</div>
+        <div class="question-label">你主要用 AI 來做什麼？</div>
+        <div class="options-grid cols-2">
+          <label class="option-label"><input type="checkbox" name="q3" value="寫作與文案"> ✍️ 寫作與文案</label>
+          <label class="option-label"><input type="checkbox" name="q3" value="圖像生成"> 🎨 圖像生成</label>
+          <label class="option-label"><input type="checkbox" name="q3" value="程式開發"> 💻 程式開發</label>
+          <label class="option-label"><input type="checkbox" name="q3" value="資料分析"> 📊 資料分析</label>
+          <label class="option-label"><input type="checkbox" name="q3" value="學習與研究"> 📚 學習與研究</label>
+          <label class="option-label"><input type="checkbox" name="q3" value="翻譯"> 🌐 翻譯</label>
+          <label class="option-label"><input type="checkbox" name="q3" value="客服與對話"> 💬 客服與對話</label>
+          <label class="option-label"><input type="checkbox" name="q3" value="影片與音樂創作"> 🎬 影片與音樂創作</label>
+        </div>
+      </div>
+
+      <!-- Q4 -->
+      <div class="card">
+        <div class="question-num">問題 4 / 4（可複選）</div>
+        <div class="question-label">你最想再精進哪些 AI 技術？</div>
+        <div class="options-grid cols-2">
+          <label class="option-label"><input type="checkbox" name="q4" value="Prompt 撰寫技巧"> 🗣 Prompt 撰寫</label>
+          <label class="option-label"><input type="checkbox" name="q4" value="圖像生成工具"> 🖼 圖像生成工具</label>
+          <label class="option-label"><input type="checkbox" name="q4" value="程式與API整合"> 🔌 程式與 API 整合</label>
+          <label class="option-label"><input type="checkbox" name="q4" value="工作流程自動化"> ⚙️ 工作流程自動化</label>
+          <label class="option-label"><input type="checkbox" name="q4" value="影片生成"> 🎞 影片生成</label>
+          <label class="option-label"><input type="checkbox" name="q4" value="本地端部署模型"> 🖥 本地端部署模型</label>
+          <label class="option-label"><input type="checkbox" name="q4" value="資料分析與視覺化"> 📈 資料分析與視覺化</label>
+          <label class="option-label"><input type="checkbox" name="q4" value="AI倫理與應用策略"> 🧭 AI 倫理與策略</label>
+        </div>
+      </div>
+
+      <div id="error-area"></div>
+      <button class="submit-btn" onclick="submitSurvey()">送出回答</button>
+    </div>
+
+    <!-- Thank you -->
+    <div id="thank-you-area" style="display:none">
+      <div class="card thank-you">
+        <div class="check-circle">✅</div>
+        <h2>謝謝你的填寫！</h2>
+        <p>你的回答已記錄，快去看看大家的結果吧。</p>
+        <button class="see-results-btn" onclick="showTab('results')">查看結果統計 →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== RESULTS ===== -->
+  <div id="view-results" style="display:none">
+    <div class="results-header">
+      <h2>結果統計</h2>
+      <p>即時更新・所有人的填寫匯總</p>
+    </div>
+    <div id="results-content">
+      <div class="loading">讀取中…</div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// ╔══════════════════════════════════════════════╗
+// ║  請將下方網址換成你的 Apps Script 部署網址   ║
+// ╚══════════════════════════════════════════════╝
+const SCRIPT_URL = 'YOUR_GOOGLE_APPS_SCRIPT_URL_HERE';
+
+const isConfigured = SCRIPT_URL !== 'YOUR_GOOGLE_APPS_SCRIPT_URL_HERE';
+
+if (isConfigured) {
+  document.getElementById('setup-notice').style.display = 'none';
+}
+
+function showTab(tab) {
+  document.getElementById('view-survey').style.display  = tab === 'survey'  ? '' : 'none';
+  document.getElementById('view-results').style.display = tab === 'results' ? '' : 'none';
+  document.getElementById('tab-survey').classList.toggle('active',  tab === 'survey');
+  document.getElementById('tab-results').classList.toggle('active', tab === 'results');
+  if (tab === 'results') loadResults();
+}
+
+function getChecked(name) {
+  return [...document.querySelectorAll(`input[name="${name}"]:checked`)].map(el => el.value);
+}
+
+function submitSurvey() {
+  const q1 = getChecked('q1')[0];
+  const q2 = getChecked('q2')[0];
+  const q3 = getChecked('q3');
+  const q4 = getChecked('q4');
+
+  const errors = [];
+  if (!q1) errors.push('請選擇年齡範圍');
+  if (!q2) errors.push('請選擇熟悉程度');
+  if (!q3.length) errors.push('請至少選擇一項 AI 用途');
+  if (!q4.length) errors.push('請至少選擇一項想精進的技術');
+
+  const errArea = document.getElementById('error-area');
+  if (errors.length) {
+    errArea.innerHTML = `<div class="error-msg">⚠️ ${errors.join('、')}</div>`;
+    return;
+  }
+  errArea.innerHTML = '';
+
+  const btn = document.querySelector('.submit-btn');
+  btn.textContent = '送出中…';
+  btn.disabled = true;
+
+  if (!isConfigured) {
+    // Demo mode：直接跳成功畫面
+    setTimeout(() => {
+      document.getElementById('form-area').style.display = 'none';
+      document.getElementById('thank-you-area').style.display = '';
+    }, 600);
+    return;
+  }
+
+  const payload = new URLSearchParams({ q1, q2, q3: q3.join('|'), q4: q4.join('|') });
+
+  fetch(SCRIPT_URL, { method: 'POST', body: payload })
+    .then(r => r.json())
+    .then(data => {
+      if (data.result === 'success') {
+        document.getElementById('form-area').style.display = 'none';
+        document.getElementById('thank-you-area').style.display = '';
+      } else {
+        throw new Error(data.error || '未知錯誤');
+      }
+    })
+    .catch(err => {
+      errArea.innerHTML = `<div class="error-msg">送出失敗：${err.message}。請稍後再試。</div>`;
+      btn.textContent = '送出回答';
+      btn.disabled = false;
+    });
+}
+
+// ── Results ──────────────────────────────────────
+const LABELS = {
+  q1: { title: 'Q1 年齡分佈', opts: ['18歲以下','18–24','25–34','35–44','45–54','55歲以上'] },
+  q2: { title: 'Q2 AI 熟悉程度', opts: ['完全新手','偶爾使用','定期使用','進階用戶','專業開發者'] },
+  q3: { title: 'Q3 主要用途（複選）', opts: ['寫作與文案','圖像生成','程式開發','資料分析','學習與研究','翻譯','客服與對話','影片與音樂創作'] },
+  q4: { title: 'Q4 想精進技術（複選）', opts: ['Prompt 撰寫技巧','圖像生成工具','程式與API整合','工作流程自動化','影片生成','本地端部署模型','資料分析與視覺化','AI倫理與應用策略'] },
+};
+
+function loadResults() {
+  const el = document.getElementById('results-content');
+
+  if (!isConfigured) {
+    el.innerHTML = renderDemoResults();
+    return;
+  }
+
+  el.innerHTML = '<div class="loading">讀取中…</div>';
+  fetch(SCRIPT_URL + '?action=results')
+    .then(r => r.json())
+    .then(data => { el.innerHTML = renderResults(data); })
+    .catch(() => { el.innerHTML = '<div class="error-msg">無法讀取資料，請確認 Script 網址設定正確。</div>'; });
+}
+
+function renderResults(data) {
+  const total = data.total || 0;
+  let html = `<div class="total-badge">📋 共 ${total} 份回答</div>`;
+
+  for (const [key, cfg] of Object.entries(LABELS)) {
+    const counts = data[key] || {};
+    const max = Math.max(...cfg.opts.map(o => counts[o] || 0), 1);
+    html += `<div class="stat-card"><div class="stat-title">${cfg.title}</div>`;
+    for (const opt of cfg.opts) {
+      const n = counts[opt] || 0;
+      const pct = Math.round(n / max * 100);
+      html += `<div class="bar-row">
+        <span class="bar-label">${opt}</span>
+        <div class="bar-track"><div class="bar-fill" style="width:${pct}%"></div></div>
+        <span class="bar-count">${n}</span>
+      </div>`;
+    }
+    html += '</div>';
+  }
+  return html;
+}
+
+function renderDemoResults() {
+  const demo = {
+    total: 42,
+    q1: {'18歲以下':3,'18–24':12,'25–34':18,'35–44':7,'45–54':2,'55歲以上':0},
+    q2: {'完全新手':5,'偶爾使用':11,'定期使用':16,'進階用戶':8,'專業開發者':2},
+    q3: {'寫作與文案':28,'圖像生成':20,'程式開發':15,'資料分析':12,'學習與研究':25,'翻譯':18,'客服與對話':9,'影片與音樂創作':7},
+    q4: {'Prompt 撰寫技巧':30,'圖像生成工具':22,'程式與API整合':14,'工作流程自動化':26,'影片生成':19,'本地端部署模型':8,'資料分析與視覺化':11,'AI倫理與應用策略':10},
+  };
+  return '<div style="background:#fffbeb;border:1px solid #fde68a;border-radius:8px;padding:10px 14px;font-size:13px;color:#92400e;margin-bottom:1rem;">以下為示範資料，設定 Script 網址後會顯示真實回答。</div>' + renderResults(demo);
+}
+</script>
+</body>
+</html>
