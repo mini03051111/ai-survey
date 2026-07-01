@@ -381,7 +381,7 @@
   <div class="header">
     <span class="header-badge">2 分鐘完成</span>
     <h1>你怎麼用 AI？</h1>
-    <p>幫我們了解大家的 AI 使用現況，<br>結果公開透明，填完即可查看。</p>
+    <p>看看大家的 AI 使用現況，<br>結果公開透明，填完即可查看。</p>
   </div>
 
   <div class="nav">
@@ -401,7 +401,7 @@
     <div id="form-area">
       <!-- Q1 -->
       <div class="card">
-        <div class="question-num">問題 1 / 4</div>
+        <div class="question-num">問題 1 / 5</div>
         <div class="question-label">你的年齡範圍是？</div>
         <div class="options-grid cols-2">
           <label class="option-label"><input type="radio" name="q1" value="18歲以下"> 18 歲以下</label>
@@ -415,7 +415,7 @@
 
       <!-- Q2 -->
       <div class="card">
-        <div class="question-num">問題 2 / 4</div>
+        <div class="question-num">問題 2 / 5</div>
         <div class="question-label">你對 AI 工具的熟悉程度？</div>
         <div class="options-grid">
           <label class="option-label"><input type="radio" name="q2" value="完全新手"> 🌱 完全新手 — 還沒用過或剛開始接觸</label>
@@ -428,7 +428,7 @@
 
       <!-- Q3 -->
       <div class="card">
-        <div class="question-num">問題 3 / 4（可複選）</div>
+        <div class="question-num">問題 3 / 5（可複選）</div>
         <div class="question-label">你主要用 AI 來做什麼？</div>
         <div class="options-grid cols-2">
           <label class="option-label"><input type="checkbox" name="q3" value="寫作與文案"> ✍️ 寫作與文案</label>
@@ -444,7 +444,7 @@
 
       <!-- Q4 -->
       <div class="card">
-        <div class="question-num">問題 4 / 4（可複選）</div>
+        <div class="question-num">問題 4 / 5（可複選）</div>
         <div class="question-label">你最想再精進哪些 AI 技術？</div>
         <div class="options-grid cols-2">
           <label class="option-label"><input type="checkbox" name="q4" value="Prompt 撰寫技巧"> 🗣 Prompt 撰寫</label>
@@ -455,6 +455,24 @@
           <label class="option-label"><input type="checkbox" name="q4" value="本地端部署模型"> 🖥 本地端部署模型</label>
           <label class="option-label"><input type="checkbox" name="q4" value="資料分析與視覺化"> 📈 資料分析與視覺化</label>
           <label class="option-label"><input type="checkbox" name="q4" value="AI倫理與應用策略"> 🧭 AI 倫理與策略</label>
+        </div>
+      </div>
+
+      <!-- Q5 -->
+      <div class="card">
+        <div class="question-num">問題 5 / 5（可複選）</div>
+        <div class="question-label">你對「未來 AI」的想像是？</div>
+        <div class="options-grid cols-2">
+          <label class="option-label"><input type="checkbox" name="q5" value="人機共生"> 🤝 人機共生，AI成為長期夥伴</label>
+          <label class="option-label"><input type="checkbox" name="q5" value="自主意識或情感"> 🧠 AI發展出自主意識或情感</label>
+          <label class="option-label"><input type="checkbox" name="q5" value="人機融合技術"> 🦾 腦機介面／義肢等人機融合普及</label>
+          <label class="option-label"><input type="checkbox" name="q5" value="全自動生活管家"> 🏠 全自動生活管家</label>
+          <label class="option-label"><input type="checkbox" name="q5" value="客製化AI教師"> 🎓 客製化AI教師，因材施教</label>
+          <label class="option-label"><input type="checkbox" name="q5" value="加速科學醫療突破"> 🔬 加速科學研究與醫療突破</label>
+          <label class="option-label"><input type="checkbox" name="q5" value="解決氣候能源問題"> 🌍 協助解決氣候與能源問題</label>
+          <label class="option-label"><input type="checkbox" name="q5" value="取代人類工作"> 💼 大量取代人類工作</label>
+          <label class="option-label"><input type="checkbox" name="q5" value="失控風險"> ⚠️ 失控風險，難以掌控</label>
+          <label class="option-label"><input type="checkbox" name="q5" value="真假難辨"> 🎭 真假難辨，AI生成內容充斥</label>
         </div>
       </div>
 
@@ -515,12 +533,14 @@ function submitSurvey() {
   const q2 = getChecked('q2')[0];
   const q3 = getChecked('q3');
   const q4 = getChecked('q4');
+  const q5 = getChecked('q5');
 
   const errors = [];
   if (!q1) errors.push('請選擇年齡範圍');
   if (!q2) errors.push('請選擇熟悉程度');
   if (!q3.length) errors.push('請至少選擇一項 AI 用途');
   if (!q4.length) errors.push('請至少選擇一項想精進的技術');
+  if (!q5.length) errors.push('請至少選擇一項對未來 AI 的想像');
 
   const errArea = document.getElementById('error-area');
   if (errors.length) {
@@ -542,7 +562,7 @@ function submitSurvey() {
     return;
   }
 
-  const payload = new URLSearchParams({ q1, q2, q3: q3.join('|'), q4: q4.join('|') });
+  const payload = new URLSearchParams({ q1, q2, q3: q3.join('|'), q4: q4.join('|'), q5: q5.join('|') });
 
   fetch(SCRIPT_URL, { method: 'POST', body: payload })
     .then(r => r.json())
@@ -621,6 +641,7 @@ const LABELS = {
   q2: { title: 'Q2 AI 熟悉程度', opts: ['完全新手','偶爾使用','定期使用','進階用戶','專業開發者'] },
   q3: { title: 'Q3 主要用途（複選）', opts: ['寫作與文案','圖像生成','程式開發','資料分析','學習與研究','翻譯','客服與對話','影片與音樂創作'] },
   q4: { title: 'Q4 想精進技術（複選）', opts: ['Prompt 撰寫技巧','圖像生成工具','程式與API整合','工作流程自動化','影片生成','本地端部署模型','資料分析與視覺化','AI倫理與應用策略'] },
+  q5: { title: 'Q5 對未來 AI 的想像（複選）', opts: ['人機共生','自主意識或情感','人機融合技術','全自動生活管家','客製化AI教師','加速科學醫療突破','解決氣候能源問題','取代人類工作','失控風險','真假難辨'] },
 };
 
 function loadResults() {
@@ -675,6 +696,7 @@ function renderDemoResults() {
     q2: {'完全新手':5,'偶爾使用':11,'定期使用':16,'進階用戶':8,'專業開發者':2},
     q3: {'寫作與文案':28,'圖像生成':20,'程式開發':15,'資料分析':12,'學習與研究':25,'翻譯':18,'客服與對話':9,'影片與音樂創作':7},
     q4: {'Prompt 撰寫技巧':30,'圖像生成工具':22,'程式與API整合':14,'工作流程自動化':26,'影片生成':19,'本地端部署模型':8,'資料分析與視覺化':11,'AI倫理與應用策略':10},
+    q5: {'人機共生':24,'自主意識或情感':15,'人機融合技術':9,'全自動生活管家':20,'客製化AI教師':17,'加速科學醫療突破':22,'解決氣候能源問題':13,'取代人類工作':19,'失控風險':16,'真假難辨':11},
   };
   return '<div style="background:#fffbeb;border:1px solid #fde68a;border-radius:8px;padding:10px 14px;font-size:13px;color:#92400e;margin-bottom:1rem;">以下為示範資料，設定 Script 網址後會顯示真實回答。</div>' + renderResults(demo);
 }
