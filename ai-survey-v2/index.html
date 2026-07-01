@@ -1,0 +1,769 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI 使用調查｜大家的 AI 足跡</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --cream:#FBF3E7;
+    --paper:#FFFDF8;
+    --apricot:#F3A263;
+    --apricot-soft:#FBE3C8;
+    --apricot-deep:#D97F45;
+    --sage:#8FA998;
+    --sage-soft:#E4ECE3;
+    --ink:#4A4036;
+    --muted:#A69A87;
+    --line:#EADFC9;
+    --radius:20px;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--cream);
+    color:var(--ink);
+    font-family:'Noto Sans TC', sans-serif;
+    min-height:100vh;
+    padding:48px 16px 80px;
+  }
+  .num{font-family:'Fredoka','Noto Sans TC',sans-serif;}
+
+  .wrap{max-width:680px; margin:0 auto;}
+
+  /* header */
+  header{text-align:center; margin-bottom:14px; position:relative;}
+  .mascot{display:flex; justify-content:center; margin-bottom:6px;}
+  .eyebrow{
+    display:inline-block;
+    font-family:'Fredoka',sans-serif;
+    font-size:13px;
+    letter-spacing:0.08em;
+    color:var(--apricot-deep);
+    background:var(--apricot-soft);
+    padding:6px 16px;
+    border-radius:999px;
+    margin-bottom:16px;
+  }
+  h1{
+    font-size:28px;
+    font-weight:900;
+    margin:0 0 10px;
+    line-height:1.4;
+  }
+  h1 .accent{color:var(--apricot-deep);}
+  header p.sub{
+    color:var(--muted);
+    font-size:14px;
+    margin:0;
+  }
+
+  .progress-note{
+    text-align:center;
+    font-size:13px;
+    color:var(--muted);
+    margin:0 0 26px;
+  }
+  .progress-note .num{color:var(--apricot-deep); font-weight:600;}
+
+  /* trail */
+  .trail{position:relative;}
+  .trail::before{
+    content:"";
+    position:absolute;
+    left:23px; top:8px; bottom:8px;
+    width:2px;
+    background-image:linear-gradient(var(--line) 60%, transparent 0%);
+    background-size:2px 12px;
+    background-repeat:repeat-y;
+  }
+
+  .qcard{
+    position:relative;
+    background:var(--paper);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:26px 26px 22px 66px;
+    margin-bottom:20px;
+    box-shadow:0 10px 24px -14px rgba(74,64,54,0.18);
+  }
+  .doodle-leaf{
+    position:absolute;
+    top:14px;
+    right:14px;
+    opacity:0.9;
+  }
+  .badge{
+    position:absolute;
+    left:8px; top:26px;
+    width:32px; height:32px;
+    border-radius:50%;
+    background:var(--apricot);
+    color:#fff;
+    display:flex; align-items:center; justify-content:center;
+    font-family:'Fredoka',sans-serif;
+    font-weight:600;
+    font-size:14px;
+    box-shadow:0 4px 10px -2px rgba(217,127,69,0.5);
+  }
+  .kicker{
+    font-size:12px;
+    color:var(--sage);
+    font-weight:700;
+    letter-spacing:0.04em;
+    margin:0 0 6px;
+  }
+  .qtext{
+    font-size:17px;
+    font-weight:700;
+    margin:0 0 4px;
+    line-height:1.5;
+  }
+  .qhint{
+    font-size:12px;
+    color:var(--muted);
+    margin:0 0 16px;
+  }
+
+  .options{display:flex; flex-wrap:wrap; gap:8px;}
+  .opt{
+    border:1.5px solid var(--line);
+    background:var(--cream);
+    color:var(--ink);
+    padding:9px 16px;
+    border-radius:999px;
+    font-size:13.5px;
+    font-family:inherit;
+    cursor:pointer;
+    transition:background .18s ease, border-color .18s ease, color .18s ease, transform .12s ease;
+  }
+  .opt:hover{border-color:var(--sage);}
+  .opt:active{transform:scale(0.97);}
+  .opt.selected{
+    background:var(--apricot);
+    border-color:var(--apricot);
+    color:#fff;
+    font-weight:500;
+  }
+  .opt:focus-visible{outline:2px solid var(--sage); outline-offset:2px;}
+
+  .otherbox{margin-top:10px; display:none;}
+  .otherbox.show{display:block;}
+  .otherbox input{
+    width:100%;
+    padding:10px 14px;
+    border-radius:12px;
+    border:1.5px solid var(--line);
+    background:var(--cream);
+    font-family:inherit;
+    font-size:13.5px;
+    color:var(--ink);
+  }
+  .otherbox input:focus{outline:2px solid var(--sage); border-color:var(--sage);}
+
+  /* submit */
+  .submit-row{text-align:center; margin:34px 0 8px;}
+  .btn{
+    font-family:'Fredoka','Noto Sans TC',sans-serif;
+    font-size:16px;
+    font-weight:600;
+    padding:14px 36px;
+    border-radius:999px;
+    border:none;
+    background:var(--apricot);
+    color:#fff;
+    cursor:pointer;
+    box-shadow:0 10px 20px -8px rgba(217,127,69,0.55);
+    transition:filter .2s ease, transform .12s ease, opacity .2s ease;
+  }
+  .btn:hover:not(:disabled){filter:brightness(1.05);}
+  .btn:active:not(:disabled){transform:scale(0.98);}
+  .btn:disabled{opacity:0.4; cursor:not-allowed; box-shadow:none;}
+  .btn:focus-visible{outline:2px solid var(--sage); outline-offset:3px;}
+  .form-note{
+    text-align:center;
+    font-size:12.5px;
+    color:var(--muted);
+    margin-top:10px;
+    min-height:16px;
+  }
+
+  .btn-secondary{
+    font-family:'Fredoka','Noto Sans TC',sans-serif;
+    font-size:13px;
+    font-weight:600;
+    padding:10px 18px;
+    border-radius:999px;
+    border:1.5px solid var(--apricot);
+    background:var(--paper);
+    color:var(--apricot-deep);
+    cursor:pointer;
+    transition:background .18s ease;
+  }
+  .btn-secondary:hover{background:var(--apricot-soft);}
+  .btn-secondary:focus-visible{outline:2px solid var(--sage); outline-offset:2px;}
+
+  /* stats */
+  #statsSection{display:none; margin-top:56px;}
+  #statsSection.show{display:block; animation:fade .4s ease;}
+  @keyframes fade{from{opacity:0; transform:translateY(10px);} to{opacity:1; transform:translateY(0);}}
+
+  .stats-head{text-align:center; margin-bottom:20px;}
+  .stats-head .eyebrow{background:var(--sage-soft); color:#5C7566;}
+  .stats-head h2{font-size:22px; font-weight:900; margin:0 0 6px;}
+  .stats-head p{color:var(--muted); font-size:13.5px; margin:0;}
+  .stats-head .total{font-family:'Fredoka',sans-serif; font-weight:700; color:var(--apricot-deep);}
+
+  .stats-controls{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:12px;
+    margin-bottom:14px;
+    flex-wrap:wrap;
+  }
+  .updated-note{font-size:12px; color:var(--muted);}
+  .refresh-btn{
+    font-family:'Fredoka',sans-serif;
+    font-size:12.5px;
+    font-weight:600;
+    padding:6px 14px;
+    border-radius:999px;
+    border:1.5px solid var(--sage);
+    background:var(--paper);
+    color:#5C7566;
+    cursor:pointer;
+  }
+  .refresh-btn:hover{background:var(--sage-soft);}
+  .refresh-btn:focus-visible{outline:2px solid var(--sage); outline-offset:2px;}
+
+  .filter-row{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+    margin-bottom:24px;
+    font-size:13px;
+    flex-wrap:wrap;
+  }
+  .filter-row select{
+    font-family:inherit;
+    font-size:13px;
+    padding:6px 12px;
+    border-radius:999px;
+    border:1.5px solid var(--line);
+    background:var(--cream);
+    color:var(--ink);
+  }
+  .filter-row select:focus-visible{outline:2px solid var(--sage);}
+
+  .stat-card{
+    background:var(--paper);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:22px 24px;
+    margin-bottom:16px;
+  }
+  .stat-card h3{
+    font-size:14.5px;
+    font-weight:700;
+    margin:0 0 14px;
+  }
+
+  .pie-wrap{display:flex; align-items:center; gap:24px; flex-wrap:wrap;}
+  .pie{
+    width:132px; height:132px;
+    border-radius:50%;
+    flex:0 0 auto;
+    background:var(--sage-soft);
+  }
+  .pie-legend{flex:1 1 160px; display:flex; flex-direction:column; gap:9px;}
+  .legend-row{display:flex; align-items:center; gap:8px; font-size:12.5px; color:var(--ink);}
+  .legend-dot{width:10px; height:10px; border-radius:50%; flex:0 0 auto;}
+  .legend-row .pct{margin-left:auto; font-family:'Fredoka',sans-serif; font-weight:600; color:var(--apricot-deep);}
+
+  .bar-row{margin-bottom:12px;}
+  .bar-row:last-child{margin-bottom:0;}
+  .bar-label{display:flex; justify-content:space-between; font-size:12.5px; color:var(--ink); margin-bottom:5px;}
+  .bar-label .pct{color:var(--apricot-deep); font-family:'Fredoka',sans-serif; font-weight:600;}
+  .bar-track{background:var(--sage-soft); border-radius:999px; height:10px; overflow:hidden;}
+  .bar-fill{height:100%; background:var(--apricot); border-radius:999px; width:0%; transition:width .6s ease;}
+
+  .other-list{margin-top:14px; padding-top:12px; border-top:1px dashed var(--line);}
+  .other-list-title{font-size:12px; color:var(--sage); font-weight:700; margin:0 0 8px;}
+  .other-list ul{margin:0; padding-left:18px; font-size:12.5px; color:var(--ink);}
+  .other-list li{margin-bottom:4px;}
+
+  .status-msg{text-align:center; font-size:13px; color:var(--sage); margin-top:14px;}
+  .status-msg.error{color:#C0674A;}
+
+  .share-row{
+    display:flex;
+    gap:10px;
+    justify-content:center;
+    flex-wrap:wrap;
+    margin:28px 0 8px;
+  }
+  .card-result{text-align:center; margin-top:16px;}
+  .card-result img{max-width:100%; border-radius:16px; border:1px solid var(--line);}
+  .card-result a{display:inline-block; margin-top:10px;}
+
+  .share-card-template{
+    position:absolute;
+    left:-9999px;
+    top:0;
+    width:360px;
+    padding:30px 26px;
+    background:#FFFDF8;
+    border-radius:24px;
+    border:1px solid #EADFC9;
+  }
+
+  @media (max-width:480px){
+    .qcard{padding:22px 18px 18px 56px;}
+    .badge{left:6px; top:22px; width:28px; height:28px; font-size:12.5px;}
+    .trail::before{left:19px;}
+    h1{font-size:23px;}
+    .pie-wrap{flex-direction:column; align-items:flex-start;}
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    #statsSection.show{animation:none;}
+    .opt, .btn, .btn-secondary, .bar-fill{transition:none;}
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header>
+    <div class="mascot" aria-hidden="true">
+      <svg width="72" height="72" viewBox="0 0 72 72">
+        <ellipse cx="36" cy="40" rx="26" ry="24" fill="var(--apricot-soft)" stroke="var(--apricot)" stroke-width="2"/>
+        <circle cx="27" cy="38" r="3" fill="var(--ink)"/>
+        <circle cx="45" cy="38" r="3" fill="var(--ink)"/>
+        <path d="M28 48 Q36 54 44 48" stroke="var(--ink)" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+        <line x1="36" y1="16" x2="36" y2="9" stroke="var(--sage)" stroke-width="2" stroke-linecap="round"/>
+        <path d="M36 9 C34 4 41 2 43 6 C45 10 38 12 36 9 Z" fill="var(--sage)"/>
+      </svg>
+    </div>
+    <span class="eyebrow num">親身測試．真實回饋</span>
+    <h1>大家的 <span class="accent">AI 足跡</span> 🌿</h1>
+    <p class="sub">五個小問題，看看大家實際上都怎麼用 AI</p>
+  </header>
+
+  <p class="progress-note num" id="progressNote">已完成 0 / 5</p>
+
+  <form id="surveyForm" class="trail"></form>
+
+  <div class="submit-row">
+    <button type="submit" form="surveyForm" class="btn" id="submitBtn" disabled>送出回覆</button>
+    <p class="form-note" id="formNote">請完成所有題目後即可送出</p>
+  </div>
+
+  <section id="statsSection">
+    <div class="stats-head">
+      <div class="mascot" aria-hidden="true">
+        <svg width="72" height="72" viewBox="0 0 72 72">
+          <ellipse cx="36" cy="42" rx="24" ry="22" fill="var(--sage-soft)" stroke="var(--sage)" stroke-width="2"/>
+          <circle cx="28" cy="40" r="3" fill="var(--ink)"/>
+          <circle cx="44" cy="40" r="3" fill="var(--ink)"/>
+          <path d="M28 48 Q36 56 44 48" stroke="var(--ink)" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+          <path d="M14 30 L6 18" stroke="var(--sage)" stroke-width="3" stroke-linecap="round"/>
+          <path d="M58 30 L66 18" stroke="var(--sage)" stroke-width="3" stroke-linecap="round"/>
+          <path d="M9 9 l3 3 M63 9 l-3 3 M36 3 l0 5" stroke="var(--apricot)" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <span class="eyebrow num">統計結果</span>
+      <h2>目前為止大家怎麼說</h2>
+      <p>已收集 <span class="total num" id="totalCount">0</span> 份回覆</p>
+    </div>
+
+    <div class="stats-controls">
+      <span class="updated-note num" id="updatedNote"></span>
+      <button type="button" class="refresh-btn" id="refreshStatsBtn">↻ 重新整理</button>
+    </div>
+
+    <div class="filter-row" id="filterRow" style="display:none;">
+      <label for="ageFilter">依年齡層篩選：</label>
+      <select id="ageFilter">
+        <option value="">全部</option>
+      </select>
+    </div>
+
+    <div id="statsBody"></div>
+
+    <div class="share-row">
+      <button type="button" class="btn-secondary" id="makeCardBtn">產生我的 AI 使用小卡</button>
+      <button type="button" class="btn-secondary" id="copyLinkBtn">複製連結分享給朋友</button>
+    </div>
+    <div class="card-result" id="cardResult"></div>
+  </section>
+</div>
+
+<div class="share-card-template" id="shareCardTemplate" aria-hidden="true"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script>
+/* ------------------------------------------------------------------
+   設定：換成你部署好的 Google Apps Script 網頁應用程式網址
+------------------------------------------------------------------- */
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxvAwsKD16RcqMON8BfYr2leNOyYZI4VvGNbwUqmbhWdAq_QsVT4srOutLBplMKEVPt/exec"; // ← 貼上你的 Apps Script Web App 網址（結尾 /exec）
+const QUESTIONS_FILE = "./questions.json";
+
+let SURVEY = [];
+const answers = {};
+const otherText = {};
+let lastStatsFetch = null;
+
+const PIE_COLORS = ['#F3A263', '#8FA998', '#D97F45', '#C9DAC2', '#E8C168', '#B98B73'];
+
+function hashColor(label){
+  let hash = 0;
+  for(let i = 0; i < label.length; i++){
+    hash = (hash * 31 + label.charCodeAt(i)) % PIE_COLORS.length;
+  }
+  return PIE_COLORS[Math.abs(hash) % PIE_COLORS.length];
+}
+
+function formatOtherText(raw){
+  const cleaned = raw.replace(/^其他[:：]\s*/, '').trim();
+  return cleaned || raw;
+}
+
+function buildOtherListHtml(otherTexts){
+  if(!otherTexts || !otherTexts.length) return '';
+  const items = otherTexts.map(t => `<li>${formatOtherText(t)}</li>`).join('');
+  return `
+    <div class="other-list">
+      <p class="other-list-title">大家填的「其他」：</p>
+      <ul>${items}</ul>
+    </div>`;
+}
+
+function buildPieCard(q, counts, total, otherTexts){
+  let acc = 0;
+  const stops = q.options.map(opt => {
+    const c = counts[opt] || 0;
+    const pct = total ? (c / total * 100) : 0;
+    const start = acc;
+    acc += pct;
+    return `${hashColor(opt)} ${start}% ${acc}%`;
+  }).join(', ');
+  const gradient = total ? `conic-gradient(${stops})` : null;
+
+  const legend = q.options.map(opt => {
+    const c = counts[opt] || 0;
+    const pct = total ? Math.round((c / total) * 100) : 0;
+    return `
+      <div class="legend-row">
+        <span class="legend-dot" style="background:${hashColor(opt)}"></span>
+        <span>${opt}</span>
+        <span class="pct">${c} 人・${pct}%</span>
+      </div>`;
+  }).join('');
+
+  return `
+    <div class="stat-card">
+      <h3>${q.text}</h3>
+      <div class="pie-wrap">
+        <div class="pie" style="${gradient ? `background:${gradient}` : ''}"></div>
+        <div class="pie-legend">${legend}</div>
+      </div>
+      ${buildOtherListHtml(otherTexts)}
+    </div>`;
+}
+
+function buildBarCard(q, counts, total, otherTexts){
+  const rows = q.options.map(opt => {
+    const c = counts[opt] || 0;
+    const pct = total ? Math.round((c / total) * 100) : 0;
+    return `
+      <div class="bar-row">
+        <div class="bar-label"><span>${opt}</span><span class="pct">${c} 人・${pct}%</span></div>
+        <div class="bar-track"><div class="bar-fill" style="width:${pct}%"></div></div>
+      </div>`;
+  }).join('');
+  return `<div class="stat-card"><h3>${q.text}</h3>${rows}${buildOtherListHtml(otherTexts)}</div>`;
+}
+
+const form = document.getElementById('surveyForm');
+const submitBtn = document.getElementById('submitBtn');
+const formNote = document.getElementById('formNote');
+const progressNote = document.getElementById('progressNote');
+
+async function loadQuestions(){
+  try{
+    const res = await fetch(QUESTIONS_FILE);
+    SURVEY = await res.json();
+    renderForm();
+    setupAgeFilter();
+  }catch(err){
+    form.innerHTML = `<p style="color:#C0674A; text-align:center;">
+      題目讀取失敗，請確認 questions.json 與此頁面放在同一個資料夾，並透過網站（http/https）而非直接開啟本機檔案瀏覽。
+    </p>`;
+  }
+}
+
+function setupAgeFilter(){
+  const ageQ = SURVEY.find(q => q.id === 'age');
+  if(!ageQ) return;
+  const select = document.getElementById('ageFilter');
+  ageQ.options.forEach(opt => {
+    const o = document.createElement('option');
+    o.value = opt;
+    o.textContent = opt;
+    select.appendChild(o);
+  });
+  document.getElementById('filterRow').style.display = 'flex';
+  select.addEventListener('change', () => fetchAndRenderStats());
+}
+
+function renderForm(){
+  form.innerHTML = SURVEY.map((q, qi) => {
+    const optionsHtml = q.options.map((opt, oi) => `
+      <button type="button" class="opt ${q.type === 'single' ? 'single' : ''}"
+        data-qid="${q.id}" data-opt="${oi}">${opt}</button>
+    `).join('');
+    const hasOther = q.options.includes('其他');
+    return `
+      <div class="qcard">
+        <svg class="doodle-leaf" aria-hidden="true" width="26" height="26" viewBox="0 0 28 28">
+          <path d="M6 22 C6 10 18 4 24 4 C24 14 16 22 6 22 Z" fill="var(--sage-soft)" stroke="var(--sage)" stroke-width="1.4"/>
+          <path d="M8 20 C12 14 16 10 22 6" stroke="var(--sage)" stroke-width="1.1" fill="none"/>
+        </svg>
+        <div class="badge num">${qi + 1}</div>
+        <p class="kicker">${q.kicker}</p>
+        <p class="qtext">${q.text}</p>
+        <p class="qhint">${q.hint}</p>
+        <div class="options">${optionsHtml}</div>
+        ${hasOther ? `
+          <div class="otherbox" id="other-${q.id}">
+            <input type="text" placeholder="請簡短說明「其他」..." data-qid-other="${q.id}">
+          </div>` : ''}
+      </div>
+    `;
+  }).join('');
+
+  form.querySelectorAll('.opt').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const qid = btn.dataset.qid;
+      const q = SURVEY.find(item => item.id === qid);
+      const oi = Number(btn.dataset.opt);
+      const val = q.options[oi];
+      if(!answers[qid]) answers[qid] = [];
+
+      if(q.type === 'single'){
+        answers[qid] = [val];
+        form.querySelectorAll(`.opt[data-qid="${qid}"]`).forEach(b => b.classList.remove('selected'));
+        btn.classList.add('selected');
+      } else {
+        const idx = answers[qid].indexOf(val);
+        if(idx > -1){
+          answers[qid].splice(idx, 1);
+          btn.classList.remove('selected');
+        } else {
+          answers[qid].push(val);
+          btn.classList.add('selected');
+        }
+      }
+
+      const otherBox = document.getElementById(`other-${qid}`);
+      if(otherBox){
+        otherBox.classList.toggle('show', answers[qid].includes('其他'));
+      }
+
+      checkComplete();
+    });
+  });
+
+  form.querySelectorAll('[data-qid-other]').forEach(input => {
+    input.addEventListener('input', () => {
+      otherText[input.dataset.qidOther] = input.value.trim();
+    });
+  });
+
+  checkComplete();
+}
+
+function checkComplete(){
+  const answeredCount = SURVEY.filter(q => answers[q.id] && answers[q.id].length > 0).length;
+  progressNote.innerHTML = `已完成 <span class="num">${answeredCount} / ${SURVEY.length}</span>`;
+  const allAnswered = answeredCount === SURVEY.length;
+  submitBtn.disabled = !allAnswered;
+  formNote.textContent = allAnswered ? '準備好了，送出吧！' : '請完成所有題目後即可送出';
+}
+
+form.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  submitBtn.disabled = true;
+  formNote.textContent = '送出中...';
+
+  const payload = {};
+  SURVEY.forEach(q => {
+    let vals = answers[q.id] || [];
+    if(vals.includes('其他') && otherText[q.id]){
+      vals = vals.map(v => v === '其他' ? `其他：${otherText[q.id]}` : v);
+    }
+    payload[q.id] = vals;
+  });
+
+  try{
+    if(SCRIPT_URL){
+      await fetch(SCRIPT_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify(payload)
+      });
+    }
+    formNote.textContent = '✓ 感謝你的回覆！';
+    await fetchAndRenderStats();
+    document.getElementById('statsSection').classList.add('show');
+    document.getElementById('statsSection').scrollIntoView({ behavior: 'smooth' });
+  }catch(err){
+    formNote.textContent = '送出時發生問題，請稍後再試一次。';
+    submitBtn.disabled = false;
+  }
+});
+
+document.getElementById('refreshStatsBtn').addEventListener('click', () => fetchAndRenderStats());
+
+function formatRelativeTime(ts){
+  if(!ts) return '';
+  const diff = Math.floor((Date.now() - ts) / 1000);
+  if(diff < 60) return '剛剛更新';
+  if(diff < 3600) return `${Math.floor(diff / 60)} 分鐘前更新`;
+  if(diff < 86400) return `${Math.floor(diff / 3600)} 小時前更新`;
+  return `${Math.floor(diff / 86400)} 天前更新`;
+}
+
+setInterval(() => {
+  const note = document.getElementById('updatedNote');
+  if(lastStatsFetch) note.textContent = formatRelativeTime(lastStatsFetch);
+}, 30000);
+
+async function fetchAndRenderStats(){
+  const statsBody = document.getElementById('statsBody');
+  const totalCount = document.getElementById('totalCount');
+  const updatedNote = document.getElementById('updatedNote');
+  const ageFilter = document.getElementById('ageFilter') ? document.getElementById('ageFilter').value : '';
+
+  if(!SCRIPT_URL){
+    statsBody.innerHTML = `<p style="text-align:center; color:var(--muted); font-size:13px;">
+      尚未設定後端網址，先顯示這次你自己的填答結果：
+    </p>` + renderLocalOnly();
+    updatedNote.textContent = '';
+    return;
+  }
+
+  updatedNote.textContent = '讀取中...';
+  try{
+    const url = ageFilter
+      ? `${SCRIPT_URL}?action=stats&age=${encodeURIComponent(ageFilter)}`
+      : `${SCRIPT_URL}?action=stats`;
+    const res = await fetch(url);
+    const data = await res.json();
+    totalCount.textContent = data.totalResponses || 0;
+    statsBody.innerHTML = SURVEY.map(q => {
+      const counts = (data.questions && data.questions[q.id]) || {};
+      const others = (data.otherTexts && data.otherTexts[q.id]) || [];
+      const total = Object.values(counts).reduce((a, b) => a + b, 0);
+      return q.type === 'single'
+        ? buildPieCard(q, counts, total, others)
+        : buildBarCard(q, counts, total || 1, others);
+    }).join('');
+    lastStatsFetch = Date.now();
+    updatedNote.textContent = formatRelativeTime(lastStatsFetch);
+  }catch(err){
+    statsBody.innerHTML = `<p style="text-align:center; color:#C0674A; font-size:13px;">
+      統計資料讀取失敗，請確認 Apps Script 已部署且允許外部存取。
+    </p>`;
+    updatedNote.textContent = '';
+  }
+}
+
+function renderLocalOnly(){
+  return SURVEY.map(q => {
+    const vals = answers[q.id] || [];
+    const counts = {};
+    q.options.forEach(opt => {
+      const hit = vals.includes(opt) || vals.some(v => v.startsWith('其他：') && opt === '其他');
+      counts[opt] = hit ? 1 : 0;
+    });
+    const myOther = (vals.find(v => v.startsWith('其他：')) || '').length ? [vals.find(v => v.startsWith('其他：'))] : [];
+    return q.type === 'single'
+      ? buildPieCard(q, counts, 1, myOther)
+      : buildBarCard(q, counts, 1, myOther);
+  }).join('');
+}
+
+function populateShareCard(){
+  const rows = SURVEY.map(q => {
+    let vals = answers[q.id] || [];
+    vals = vals.map(v => v === '其他' && otherText[q.id] ? `其他：${otherText[q.id]}` : v);
+    return `
+      <div style="margin-bottom:14px;">
+        <div style="font-size:11px; color:#8FA998; font-weight:700; margin-bottom:3px;">${q.text}</div>
+        <div style="font-size:13px; color:#4A4036; line-height:1.5;">${vals.join('、') || '—'}</div>
+      </div>`;
+  }).join('');
+
+  document.getElementById('shareCardTemplate').innerHTML = `
+    <div style="display:flex; justify-content:center; margin-bottom:8px;">
+      <svg width="56" height="56" viewBox="0 0 72 72">
+        <ellipse cx="36" cy="40" rx="26" ry="24" fill="#FBE3C8" stroke="#F3A263" stroke-width="2"/>
+        <circle cx="27" cy="38" r="3" fill="#4A4036"/>
+        <circle cx="45" cy="38" r="3" fill="#4A4036"/>
+        <path d="M28 48 Q36 54 44 48" stroke="#4A4036" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+      </svg>
+    </div>
+    <h3 style="font-size:17px; font-weight:900; margin:4px 0; text-align:center; color:#4A4036; font-family:'Noto Sans TC',sans-serif;">我的 AI 使用剖繪</h3>
+    <p style="font-size:12px; color:#A69A87; text-align:center; margin:0 0 20px; font-family:'Noto Sans TC',sans-serif;">大家的 AI 足跡・親身測試</p>
+    ${rows}
+    <p style="margin-top:18px; text-align:center; font-size:11px; color:#A69A87; font-family:'Noto Sans TC',sans-serif;">你也來測看看：${window.location.hostname}${window.location.pathname}</p>
+  `;
+}
+
+document.getElementById('makeCardBtn').addEventListener('click', async () => {
+  const btn = document.getElementById('makeCardBtn');
+  const resultBox = document.getElementById('cardResult');
+  btn.disabled = true;
+  btn.textContent = '製作中...';
+  populateShareCard();
+  try{
+    const canvas = await html2canvas(document.getElementById('shareCardTemplate'), {
+      backgroundColor: '#FFFDF8',
+      scale: 2
+    });
+    const dataUrl = canvas.toDataURL('image/png');
+    resultBox.innerHTML = `
+      <img src="${dataUrl}" alt="我的 AI 使用小卡">
+      <br>
+      <a class="btn-secondary" href="${dataUrl}" download="我的AI使用小卡.png">下載圖片</a>
+    `;
+  }catch(err){
+    resultBox.innerHTML = `<p style="color:#C0674A; font-size:13px;">小卡製作失敗，請稍後再試一次。</p>`;
+  }
+  btn.disabled = false;
+  btn.textContent = '產生我的 AI 使用小卡';
+});
+
+document.getElementById('copyLinkBtn').addEventListener('click', async () => {
+  const btn = document.getElementById('copyLinkBtn');
+  try{
+    await navigator.clipboard.writeText(window.location.href);
+    const original = btn.textContent;
+    btn.textContent = '已複製連結 ✓';
+    setTimeout(() => btn.textContent = original, 2000);
+  }catch(err){
+    alert('複製失敗，請手動複製網址列的網址');
+  }
+});
+
+loadQuestions();
+</script>
+
+</body>
+</html>
