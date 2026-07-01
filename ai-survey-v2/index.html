@@ -188,7 +188,64 @@
     color:var(--muted);
     margin-top:10px;
     min-height:16px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
   }
+
+  .loader-mascot{
+    display:none;
+    width:22px; height:22px;
+  }
+  .loader-mascot.show{
+    display:inline-block;
+    animation:bounce-spin 0.9s ease-in-out infinite;
+  }
+  @keyframes bounce-spin{
+    0%{transform:translateY(0) rotate(0deg);}
+    50%{transform:translateY(-6px) rotate(180deg);}
+    100%{transform:translateY(0) rotate(360deg);}
+  }
+
+  /* nickname modal */
+  .modal-overlay{
+    display:none;
+    position:fixed;
+    inset:0;
+    background:rgba(74,64,54,0.35);
+    align-items:center;
+    justify-content:center;
+    padding:20px;
+    z-index:50;
+  }
+  .modal-overlay.show{display:flex;}
+  .modal-box{
+    background:var(--paper);
+    border-radius:24px;
+    border:1px solid var(--line);
+    padding:28px 26px;
+    max-width:320px;
+    width:100%;
+    text-align:center;
+    box-shadow:0 20px 40px -18px rgba(74,64,54,0.35);
+  }
+  .modal-box h3{font-size:16px; font-weight:900; margin:8px 0 6px;}
+  .modal-box p{font-size:12.5px; color:var(--muted); margin:0 0 16px;}
+  .modal-box input{
+    width:100%;
+    padding:11px 16px;
+    border-radius:999px;
+    border:1.5px solid var(--line);
+    background:var(--cream);
+    font-family:inherit;
+    font-size:14px;
+    color:var(--ink);
+    text-align:center;
+    margin-bottom:16px;
+  }
+  .modal-box input:focus{outline:2px solid var(--sage); border-color:var(--sage);}
+  .modal-actions{display:flex; gap:10px; justify-content:center;}
 
   .btn-secondary{
     font-family:'Fredoka','Noto Sans TC',sans-serif;
@@ -360,7 +417,15 @@
 
   <div class="submit-row">
     <button type="submit" form="surveyForm" class="btn" id="submitBtn" disabled>送出回覆</button>
-    <p class="form-note" id="formNote">請完成所有題目後即可送出</p>
+    <p class="form-note" id="formNote">
+      <svg class="loader-mascot" id="loaderMascot" aria-hidden="true" viewBox="0 0 72 72">
+        <ellipse cx="36" cy="40" rx="26" ry="24" fill="var(--apricot-soft)" stroke="var(--apricot)" stroke-width="3"/>
+        <circle cx="27" cy="38" r="3.5" fill="var(--ink)"/>
+        <circle cx="45" cy="38" r="3.5" fill="var(--ink)"/>
+        <path d="M28 48 Q36 54 44 48" stroke="var(--ink)" stroke-width="3" fill="none" stroke-linecap="round"/>
+      </svg>
+      <span id="formNoteText">請完成所有題目後即可送出</span>
+    </p>
   </div>
 
   <section id="statsSection">
@@ -403,6 +468,26 @@
   </section>
 </div>
 
+<div class="modal-overlay" id="nicknameModal">
+  <div class="modal-box">
+    <div class="mascot" aria-hidden="true">
+      <svg width="56" height="56" viewBox="0 0 72 72">
+        <ellipse cx="36" cy="40" rx="26" ry="24" fill="var(--apricot-soft)" stroke="var(--apricot)" stroke-width="2"/>
+        <circle cx="27" cy="38" r="3" fill="var(--ink)"/>
+        <circle cx="45" cy="38" r="3" fill="var(--ink)"/>
+        <path d="M28 48 Q36 54 44 48" stroke="var(--ink)" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+      </svg>
+    </div>
+    <h3>怎麼稱呼你呢？</h3>
+    <p>這會出現在你的 AI 使用小卡上</p>
+    <input type="text" id="nicknameInput" placeholder="例如：小美" maxlength="12">
+    <div class="modal-actions">
+      <button type="button" class="btn-secondary" id="cancelNicknameBtn">取消</button>
+      <button type="button" class="btn" id="confirmNicknameBtn" style="padding:10px 24px; font-size:14px;">產生小卡 ✨</button>
+    </div>
+  </div>
+</div>
+
 <div class="share-card-template" id="shareCardTemplate" aria-hidden="true"></div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
@@ -410,7 +495,7 @@
 /* ------------------------------------------------------------------
    設定：換成你部署好的 Google Apps Script 網頁應用程式網址
 ------------------------------------------------------------------- */
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxvAwsKD16RcqMON8BfYr2leNOyYZI4VvGNbwUqmbhWdAq_QsVT4srOutLBplMKEVPt/exec"; // ← 貼上你的 Apps Script Web App 網址（結尾 /exec）
+const SCRIPT_URL = ""; // ← 貼上你的 Apps Script Web App 網址（結尾 /exec）
 const QUESTIONS_FILE = "./questions.json";
 
 let SURVEY = [];
@@ -492,6 +577,8 @@ function buildBarCard(q, counts, total, otherTexts){
 const form = document.getElementById('surveyForm');
 const submitBtn = document.getElementById('submitBtn');
 const formNote = document.getElementById('formNote');
+const formNoteText = document.getElementById('formNoteText');
+const loaderMascot = document.getElementById('loaderMascot');
 const progressNote = document.getElementById('progressNote');
 
 async function loadQuestions(){
@@ -593,13 +680,14 @@ function checkComplete(){
   progressNote.innerHTML = `已完成 <span class="num">${answeredCount} / ${SURVEY.length}</span>`;
   const allAnswered = answeredCount === SURVEY.length;
   submitBtn.disabled = !allAnswered;
-  formNote.textContent = allAnswered ? '準備好了，送出吧！' : '請完成所有題目後即可送出';
+  formNoteText.textContent = allAnswered ? '準備好了，送出吧！' : '請完成所有題目後即可送出';
 }
 
 form.addEventListener('submit', async (e) => {
   e.preventDefault();
   submitBtn.disabled = true;
-  formNote.textContent = '送出中...';
+  loaderMascot.classList.add('show');
+  formNoteText.textContent = '送出中...';
 
   const payload = {};
   SURVEY.forEach(q => {
@@ -618,12 +706,15 @@ form.addEventListener('submit', async (e) => {
         body: JSON.stringify(payload)
       });
     }
-    formNote.textContent = '✓ 感謝你的回覆！';
+    formNoteText.textContent = '統計結果整理中...';
     await fetchAndRenderStats();
+    loaderMascot.classList.remove('show');
+    formNoteText.textContent = '✓ 感謝你的回覆！';
     document.getElementById('statsSection').classList.add('show');
     document.getElementById('statsSection').scrollIntoView({ behavior: 'smooth' });
   }catch(err){
-    formNote.textContent = '送出時發生問題，請稍後再試一次。';
+    loaderMascot.classList.remove('show');
+    formNoteText.textContent = '送出時發生問題，請稍後再試一次。';
     submitBtn.disabled = false;
   }
 });
@@ -699,39 +790,83 @@ function renderLocalOnly(){
   }).join('');
 }
 
-function populateShareCard(){
-  const rows = SURVEY.map(q => {
+function escapeHtml(str){
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+function populateShareCard(nickname){
+  const rowColors = ['#FBE3C8', '#E4ECE3'];
+  const rowLabelColors = ['#D97F45', '#5C7566'];
+  const rows = SURVEY.map((q, i) => {
     let vals = answers[q.id] || [];
     vals = vals.map(v => v === '其他' && otherText[q.id] ? `其他：${otherText[q.id]}` : v);
+    const bg = rowColors[i % rowColors.length];
+    const labelColor = rowLabelColors[i % rowLabelColors.length];
     return `
-      <div style="margin-bottom:14px;">
-        <div style="font-size:11px; color:#8FA998; font-weight:700; margin-bottom:3px;">${q.text}</div>
-        <div style="font-size:13px; color:#4A4036; line-height:1.5;">${vals.join('、') || '—'}</div>
+      <div style="background:${bg}; border-radius:14px; padding:12px 14px; margin-bottom:10px;">
+        <div style="font-size:11px; font-weight:700; color:${labelColor}; margin-bottom:4px; font-family:'Noto Sans TC',sans-serif;">${q.kicker}</div>
+        <div style="font-size:13px; color:#4A4036; line-height:1.5; font-family:'Noto Sans TC',sans-serif;">${vals.join('、') || '—'}</div>
       </div>`;
   }).join('');
 
+  const displayName = (nickname || '').trim();
+  const heading = displayName ? `嗨，${escapeHtml(displayName)} 的 AI 使用剖繪` : '我的 AI 使用剖繪';
+
   document.getElementById('shareCardTemplate').innerHTML = `
-    <div style="display:flex; justify-content:center; margin-bottom:8px;">
-      <svg width="56" height="56" viewBox="0 0 72 72">
+    <div style="display:flex; justify-content:center; margin-bottom:10px;">
+      <svg width="60" height="60" viewBox="0 0 72 72">
         <ellipse cx="36" cy="40" rx="26" ry="24" fill="#FBE3C8" stroke="#F3A263" stroke-width="2"/>
         <circle cx="27" cy="38" r="3" fill="#4A4036"/>
         <circle cx="45" cy="38" r="3" fill="#4A4036"/>
         <path d="M28 48 Q36 54 44 48" stroke="#4A4036" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+        <line x1="36" y1="16" x2="36" y2="9" stroke="#8FA998" stroke-width="2" stroke-linecap="round"/>
+        <path d="M36 9 C34 4 41 2 43 6 C45 10 38 12 36 9 Z" fill="#8FA998"/>
       </svg>
     </div>
-    <h3 style="font-size:17px; font-weight:900; margin:4px 0; text-align:center; color:#4A4036; font-family:'Noto Sans TC',sans-serif;">我的 AI 使用剖繪</h3>
-    <p style="font-size:12px; color:#A69A87; text-align:center; margin:0 0 20px; font-family:'Noto Sans TC',sans-serif;">大家的 AI 足跡・親身測試</p>
+    <h3 style="font-size:16.5px; font-weight:900; margin:4px 0 2px; text-align:center; color:#4A4036; font-family:'Noto Sans TC',sans-serif;">${heading}</h3>
+    <p style="font-size:12px; color:#A69A87; text-align:center; margin:0 0 18px; font-family:'Noto Sans TC',sans-serif;">大家的 AI 足跡・親身測試</p>
     ${rows}
-    <p style="margin-top:18px; text-align:center; font-size:11px; color:#A69A87; font-family:'Noto Sans TC',sans-serif;">你也來測看看：${window.location.hostname}${window.location.pathname}</p>
+    <div style="text-align:center; margin-top:16px; font-size:11px; color:#A69A87; font-family:'Noto Sans TC',sans-serif;">
+      🌿 你也來測看看：${window.location.hostname}${window.location.pathname}
+    </div>
   `;
 }
 
-document.getElementById('makeCardBtn').addEventListener('click', async () => {
+const nicknameModal = document.getElementById('nicknameModal');
+const nicknameInput = document.getElementById('nicknameInput');
+
+document.getElementById('makeCardBtn').addEventListener('click', () => {
+  nicknameInput.value = '';
+  nicknameModal.classList.add('show');
+  nicknameInput.focus();
+});
+
+document.getElementById('cancelNicknameBtn').addEventListener('click', () => {
+  nicknameModal.classList.remove('show');
+});
+
+nicknameModal.addEventListener('click', (e) => {
+  if(e.target === nicknameModal) nicknameModal.classList.remove('show');
+});
+
+nicknameInput.addEventListener('keydown', (e) => {
+  if(e.key === 'Enter') document.getElementById('confirmNicknameBtn').click();
+});
+
+document.getElementById('confirmNicknameBtn').addEventListener('click', async () => {
+  const nickname = nicknameInput.value.trim();
+  nicknameModal.classList.remove('show');
+  await generateShareCard(nickname);
+});
+
+async function generateShareCard(nickname){
   const btn = document.getElementById('makeCardBtn');
   const resultBox = document.getElementById('cardResult');
   btn.disabled = true;
   btn.textContent = '製作中...';
-  populateShareCard();
+  populateShareCard(nickname);
   try{
     const canvas = await html2canvas(document.getElementById('shareCardTemplate'), {
       backgroundColor: '#FFFDF8',
@@ -748,7 +883,7 @@ document.getElementById('makeCardBtn').addEventListener('click', async () => {
   }
   btn.disabled = false;
   btn.textContent = '產生我的 AI 使用小卡';
-});
+}
 
 document.getElementById('copyLinkBtn').addEventListener('click', async () => {
   const btn = document.getElementById('copyLinkBtn');
