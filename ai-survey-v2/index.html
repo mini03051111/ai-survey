@@ -193,6 +193,12 @@
     justify-content:center;
     gap:8px;
   }
+  .hint-note{
+    text-align:center;
+    font-size:12px;
+    color:var(--sage);
+    margin:4px 0 0;
+  }
 
   .loader-mascot{
     display:none;
@@ -269,6 +275,12 @@
 
   .stats-head{text-align:center; margin-bottom:20px;}
   .stats-head .eyebrow{background:var(--sage-soft); color:#5C7566;}
+  .thanks-note{
+    font-size:14px;
+    font-weight:700;
+    color:var(--apricot-deep);
+    margin:0 0 12px;
+  }
   .stats-head h2{font-size:22px; font-weight:900; margin:0 0 6px;}
   .stats-head p{color:var(--muted); font-size:13.5px; margin:0;}
   .stats-head .total{font-family:'Fredoka',sans-serif; font-weight:700; color:var(--apricot-deep);}
@@ -426,6 +438,7 @@
       </svg>
       <span id="formNoteText">請完成所有題目後即可送出</span>
     </p>
+    <p class="hint-note">送出後等待片刻，就可以看到目前的統計結果哦 ⏳</p>
   </div>
 
   <section id="statsSection">
@@ -441,6 +454,7 @@
           <path d="M9 9 l3 3 M63 9 l-3 3 M36 3 l0 5" stroke="var(--apricot)" stroke-width="2" stroke-linecap="round"/>
         </svg>
       </div>
+      <p class="thanks-note">謝謝你的填寫，你的回饋很珍貴 💛</p>
       <span class="eyebrow num">統計結果</span>
       <h2>目前為止大家怎麼說</h2>
       <p>已收集 <span class="total num" id="totalCount">0</span> 份回覆</p>
