@@ -765,10 +765,11 @@ async function fetchAndRenderStats(){
 
   updatedNote.textContent = '讀取中...';
   try{
+    const cacheBuster = `_=${Date.now()}`;
     const url = ageFilter
-      ? `${SCRIPT_URL}?action=stats&age=${encodeURIComponent(ageFilter)}`
-      : `${SCRIPT_URL}?action=stats`;
-    const res = await fetch(url);
+      ? `${SCRIPT_URL}?action=stats&age=${encodeURIComponent(ageFilter)}&${cacheBuster}`
+      : `${SCRIPT_URL}?action=stats&${cacheBuster}`;
+    const res = await fetch(url, { cache: 'no-store' });
     const data = await res.json();
     totalCount.textContent = data.totalResponses || 0;
     statsBody.innerHTML = SURVEY.map(q => {
